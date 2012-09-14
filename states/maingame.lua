@@ -38,7 +38,6 @@ function level:keyreleased(key)
     end
 end
 
-function level:mousereleased
 
 function level:update(dt)
     for i, t in ipairs(self.targets) do
