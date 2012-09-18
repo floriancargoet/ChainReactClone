@@ -1,4 +1,3 @@
-
 require 'oo'
 
 BasicTarget = Object:subclass({
@@ -14,8 +13,16 @@ function BasicTarget:constructor(config)
 end
 
 function BasicTarget:update(dt)
+    self:updatePosition(dt)
+    self:updateCollisions(dt)
+end
+
+function BasicTarget:updatePosition(dt)
     self.x = self.x + self.speedX * dt
     self.y = self.y + self.speedY * dt
+end
+
+function BasicTarget:updateCollisions(dt)
     if self.x < self.radius or global.width - self.radius < self.x then
         self.speedX = - self.speedX
         self.x = self.x + 2 * self.speedX * dt

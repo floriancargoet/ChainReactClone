@@ -1,8 +1,8 @@
 require 'game'
 
 global = {
-    width  = 1280,
-    height = 800
+    width  = love.graphics.getWidth(),
+    height = love.graphics.getHeight()
 }
 
 math.randomseed( os.time() )
