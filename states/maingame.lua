@@ -4,16 +4,26 @@ require 'basictarget'
 local level = State:new()
 
 local makeTarget = function()
-    return  BasicTarget:new({
-        x      = math.random(global.width),
-        y      = math.random(global.height),
+    local t = BasicTarget:new({
+        x      = BasicTarget.radius + math.random(global.width  - 2*BasicTarget.radius),
+        y      = BasicTarget.radius + math.random(global.height - 2*BasicTarget.radius),
         speedX = math.random(-100, 100),
         speedY = math.random(-100, 100)
     })
+    return t
 end
 
 function level:init()
     self.targets = {
+        makeTarget(),
+        makeTarget(),
+        makeTarget(),
+        makeTarget(),
+        makeTarget(),
+        makeTarget(),
+        makeTarget(),
+        makeTarget(),
+        makeTarget(),
         makeTarget(),
         makeTarget(),
         makeTarget(),
@@ -26,11 +36,6 @@ function level:reset()
     self:init()
 end
 
-function level:draw()
-    for i, t in ipairs(self.targets) do
-        t:draw()
-    end
-end
 
 function level:keyreleased(key)
     if key == 'q' then
@@ -38,9 +43,34 @@ function level:keyreleased(key)
     end
 end
 
+function level:mousepressed(x, y, button)
+    for i, t in ipairs(self.targets) do
+        if t:contains(x, y) then
+            t:explode()
+        end
+    end
+end
+
 function level:update(dt)
+    local toRemove = {}
     for i, t in ipairs(self.targets) do
         t:update(dt)
+        if t.dead then
+            table.insert(toRemove, i)
+        end
+    end
+
+    local correction = 0
+    for _, idx in ipairs(toRemove) do
+        table.remove(self.targets, idx - correction)
+        -- correct the index shift
+        correction = correction + 1
+    end
+end
+
+function level:draw()
+    for i, t in ipairs(self.targets) do
+        t:draw()
     end
 end
 

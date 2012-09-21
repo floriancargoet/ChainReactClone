@@ -13,8 +13,6 @@ end
 function welcome:keyreleased(key)
     if key == 'q' then
         self.game:quit()
-    else
-        self.game:pushState('maingame')
     end
 end
 
