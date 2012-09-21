@@ -14,9 +14,11 @@ function BasicTarget:constructor(config)
     self:apply(config)
 end
 
-function BasicTarget:contains(x, y)
+function BasicTarget:contains(x, y, tolerance)
+    local r = self.radius + (tolerance or 0)
+
     local dx, dy = self.x - x, self.y - y
-    return dx * dx + dy * dy <= self.radius * self.radius
+    return dx * dx + dy * dy <= r * r
 end
 
 function BasicTarget:explode()

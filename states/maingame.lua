@@ -45,7 +45,7 @@ end
 
 function level:mousepressed(x, y, button)
     for i, t in ipairs(self.targets) do
-        if t:contains(x, y) then
+        if t:contains(x, y, 5) then
             t:explode()
         end
     end
