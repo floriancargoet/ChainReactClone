@@ -17,14 +17,16 @@ end
 function State:reset()
 end
 
-function State:keypressed(key)
-end
+local callbacks = {
+    'keypressed',
+    'keyreleased',
+    'mousepressed',
+    'mousereleased',
+    'update',
+    'draw'
+}
 
-function State:keyreleased(key)
-end
-
-function State:update(dt)
-end
-
-function State:draw()
+for i, method in ipairs(callbacks) do
+    State[method] = function()
+    end
 end

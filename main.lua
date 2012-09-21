@@ -12,13 +12,9 @@ local showFPS  = true
 local showMore = true
 local maxDt    = 16 -- ~= 1000/60
 
--- delegate everything
+-- delegate love callbacks to the game instance
 function love.load()
     game:start('welcome') -- load the first screen
-end
-
-function love.keypressed(key)
-    game:keypressed(key)
 end
 
 function love.keyreleased(key)
@@ -31,10 +27,6 @@ function love.keyreleased(key)
     else
         game:keyreleased(key)
     end
-end
-
-function love.update(dt)
-    game:update(dt)
 end
 
 function love.draw()
@@ -51,5 +43,23 @@ function love.draw()
     local dt = love.timer.getDelta()/1000
     if dt < maxDt then
         love.timer.sleep(maxDt - dt)
+    end
+end
+
+-- delegate everything else
+local callbacks = {
+    'keypressed',
+    'keyreleased',
+    'mousepressed',
+    'mousereleased',
+    'update',
+    'draw'
+}
+
+for i, method in ipairs(callbacks) do
+    if not love[method] then
+        love[method] = function(...)
+            game[method](game, ...)
+        end
     end
 end

@@ -18,4 +18,8 @@ function welcome:keyreleased(key)
     end
 end
 
+function welcome:mousereleased()
+    self.game:pushState('maingame')
+end
+
 return welcome

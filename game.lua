@@ -53,18 +53,17 @@ function Game:quit()
 end
 
 -- love callbacks
-function Game:keypressed(key)
-    self.currentState:keypressed(key)
-end
+local callbacks = {
+    'keypressed',
+    'keyreleased',
+    'mousepressed',
+    'mousereleased',
+    'update',
+    'draw'
+}
 
-function Game:keyreleased(key)
-    self.currentState:keyreleased(key)
-end
-
-function Game:update(dt)
-    self.currentState:update(dt)
-end
-
-function Game:draw()
-    self.currentState:draw()
+for i, method in ipairs(callbacks) do
+    Game[method] = function(self, ...)
+        self.currentState[method](self.currentState, ...)
+    end
 end
