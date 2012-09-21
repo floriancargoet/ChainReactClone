@@ -1,13 +1,14 @@
 require 'oo'
 
 BasicTarget = Object:subclass({
-    x      = 0,
-    y      = 0,
-    radius = 10,
-    maxRadius = 20,
-    speedX = 0,
-    speedY = 0,
-    color  = {255, 255, 255}
+    points    = 1,
+    x         = 0,
+    y         = 0,
+    radius    = 10,
+    maxRadius = 30,
+    speedX    = 0,
+    speedY    = 0,
+    color     = {255, 255, 255}
 })
 
 function BasicTarget:constructor(config)
@@ -21,21 +22,35 @@ function BasicTarget:contains(x, y, tolerance)
     return dx * dx + dy * dy <= r * r
 end
 
+function BasicTarget:touches(target)
+    local dx, dy = self.x - target.x, self.y - target.y
+    local d = self.radius + target.radius
+    return dx * dx + dy * dy <= d * d
+end
+
 function BasicTarget:explode()
-    self.exploding = true
-    self.color = {255, 0, 0}
+    if not self.exploding then
+        self.exploding = true
+        self.speedX = 0
+        self.speedY = 0
+        self.color = {255, 0, 0}
+    end
 end
 
 function BasicTarget:update(dt)
+    self:updateExplosion(dt)
+    self:updatePosition(dt)
+    self:updateCollisions(dt)
+end
+
+function BasicTarget:updateExplosion(dt)
     if self.exploding then
-        self.radius = self.radius + 10 * dt
+        self.radius = self.radius + self.maxRadius * dt / 0.8 -- 0.8 seconds
         if self.radius > self.maxRadius then
             -- container will iterate on targets and remove them when necessary
             self.dead = true
         end
     end
-    self:updatePosition(dt)
-    self:updateCollisions(dt)
 end
 
 function BasicTarget:updatePosition(dt)
@@ -55,11 +70,14 @@ function BasicTarget:updateCollisions(dt)
 end
 
 function BasicTarget:draw()
-    -- save color
+    -- save state
     local r, g, b, a = love.graphics.getColor()
+    local w = love.graphics.getLineWidth()
     -- draw circle
     love.graphics.setColor(unpack(self.color))
-    love.graphics.circle('line', self.x, self.y, self.radius, 20)
-    -- restore color
+    love.graphics.setLineWidth(1.5)
+    love.graphics.circle('line', self.x, self.y, self.radius, 30)
+    -- restore state
     love.graphics.setColor(r, g, b, a)
+    love.graphics.setLineWidth(w)
 end

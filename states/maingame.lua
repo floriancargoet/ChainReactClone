@@ -1,35 +1,29 @@
 require 'state'
 require 'basictarget'
+require 'generator'
 
 local level = State:new()
 
-local makeTarget = function()
-    local t = BasicTarget:new({
-        x      = BasicTarget.radius + math.random(global.width  - 2*BasicTarget.radius),
-        y      = BasicTarget.radius + math.random(global.height - 2*BasicTarget.radius),
-        speedX = math.random(-100, 100),
-        speedY = math.random(-100, 100)
-    })
-    return t
+local neighbors = function(target)
+    local n = {}
+    for _, t in ipairs(level.targets) do
+        if target:touches(t) and not t.exploding then
+            table.insert(n, t)
+        end
+    end
+    return ipairs(n)
 end
 
 function level:init()
-    self.targets = {
-        makeTarget(),
-        makeTarget(),
-        makeTarget(),
-        makeTarget(),
-        makeTarget(),
-        makeTarget(),
-        makeTarget(),
-        makeTarget(),
-        makeTarget(),
-        makeTarget(),
-        makeTarget(),
-        makeTarget(),
-        makeTarget()
-    }
-    self.maxPop = 50
+    self.targets = {}
+
+    self.generator = Generator:new({
+        maxPopulation = 200,
+        population = self.targets
+    })
+
+    self.generator:init()
+    self.score = 0
 end
 
 function level:reset()
@@ -45,8 +39,9 @@ end
 
 function level:mousepressed(x, y, button)
     for i, t in ipairs(self.targets) do
-        if t:contains(x, y, 5) then
+        if not t.exploding and t:contains(x, y, 10) then
             t:explode()
+            self.score = self.score + t.points
         end
     end
 end
@@ -55,9 +50,20 @@ function level:update(dt)
     local toRemove = {}
     for i, t in ipairs(self.targets) do
         t:update(dt)
+        -- remove dead targets
         if t.dead then
             table.insert(toRemove, i)
         end
+        -- propagate explosion
+        if t.exploding and not t.dead then
+            for _, n in neighbors(t) do
+                if not n.exploding then
+                    n:explode()
+                    self.score = self.score + n.points
+                end
+            end
+        end
+
     end
 
     local correction = 0
@@ -72,6 +78,7 @@ function level:draw()
     for i, t in ipairs(self.targets) do
         t:draw()
     end
+    love.graphics.print('Score: '..tostring(self.score), 0, 40)
 end
 
 return level
