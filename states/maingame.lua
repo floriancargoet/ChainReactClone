@@ -4,26 +4,18 @@ require 'generator'
 
 local level = State:new()
 
-local neighbors = function(target)
-    local n = {}
-    for _, t in ipairs(level.targets) do
-        if target:touches(t) and not t.exploding then
-            table.insert(n, t)
-        end
-    end
-    return ipairs(n)
-end
-
 function level:init()
     self.targets = {}
 
     self.generator = Generator:new({
         maxPopulation = 200,
+        growth = 5,
         population = self.targets
     })
 
     self.generator:init()
     self.score = 0
+    self.maxdepth = 0
 end
 
 function level:reset()
@@ -38,30 +30,30 @@ function level:keyreleased(key)
 end
 
 function level:mousepressed(x, y, button)
-    for i, t in ipairs(self.targets) do
-        if not t.exploding and t:contains(x, y, 10) then
-            t:explode()
-            self.score = self.score + t.points
-        end
-    end
+    local source = BasicTarget:new({
+        x = x,
+        y = y,
+        points = 0,
+        explodingColor = {0, 255, 0}
+    })
+    table.insert(self.targets, source)
+    source:explode()
 end
 
 function level:update(dt)
+    self.generator:update(dt)
     local toRemove = {}
     for i, t in ipairs(self.targets) do
         t:update(dt)
         -- remove dead targets
         if t.dead then
             table.insert(toRemove, i)
+            self.score = self.score + t:getPoints()
+            self.maxdepth = math.max(self.maxdepth, t.depth)
         end
         -- propagate explosion
         if t.exploding and not t.dead then
-            for _, n in neighbors(t) do
-                if not n.exploding then
-                    n:explode()
-                    self.score = self.score + n.points
-                end
-            end
+            t:propagate(self.targets)
         end
 
     end
@@ -79,6 +71,9 @@ function level:draw()
         t:draw()
     end
     love.graphics.print('Score: '..tostring(self.score), 0, 40)
+    love.graphics.print('Max Depth: '..tostring(self.maxdepth), 0, 60)
+    love.graphics.print('Population: '..tostring(#self.targets), 0, 80)
+
 end
 
 return level

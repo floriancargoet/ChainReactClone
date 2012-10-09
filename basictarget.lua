@@ -1,18 +1,36 @@
 require 'oo'
 
+
+-- utils
+local neighbors = function(target, all)
+    local n = {}
+    for _, t in ipairs(all) do
+        if target:touches(t) and not t.exploding then
+            table.insert(n, t)
+        end
+    end
+    return ipairs(n)
+end
+
 BasicTarget = Object:subclass({
     points    = 1,
+    depth     = 1,
     x         = 0,
     y         = 0,
     radius    = 10,
     maxRadius = 30,
     speedX    = 0,
     speedY    = 0,
-    color     = {255, 255, 255}
+    color     = {255, 255, 255},
+    explodingColor = {255, 0, 0}
 })
 
 function BasicTarget:constructor(config)
     self:apply(config)
+end
+
+function BasicTarget:getPoints()
+    return self.points * self.depth
 end
 
 function BasicTarget:contains(x, y, tolerance)
@@ -28,12 +46,23 @@ function BasicTarget:touches(target)
     return dx * dx + dy * dy <= d * d
 end
 
-function BasicTarget:explode()
+function BasicTarget:explode(depth)
     if not self.exploding then
+        self.depth = depth or 1
         self.exploding = true
         self.speedX = 0
         self.speedY = 0
-        self.color = {255, 0, 0}
+        self.color = self.explodingColor
+        self.explosionDuration = 0.8 * (self.maxRadius - self.radius) / 20
+        print(self.explosionDuration)
+    end
+end
+
+function BasicTarget:propagate(all)
+    for _, n in neighbors(self, all) do
+        if not n.exploding then
+            n:explode(self.depth + 1)
+        end
     end
 end
 
@@ -45,7 +74,7 @@ end
 
 function BasicTarget:updateExplosion(dt)
     if self.exploding then
-        self.radius = self.radius + self.maxRadius * dt / 0.8 -- 0.8 seconds
+        self.radius = self.radius + self.maxRadius * dt / self.explosionDuration
         if self.radius > self.maxRadius then
             -- container will iterate on targets and remove them when necessary
             self.dead = true
