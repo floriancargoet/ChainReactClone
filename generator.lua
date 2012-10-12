@@ -1,6 +1,7 @@
 require 'oo'
 require 'basictarget'
 require 'bigtarget'
+require 'bonustarget'
 
 -- Generator class
 Generator = Object:subclass({
@@ -31,6 +32,17 @@ local makeBigTarget = function()
     return t
 end
 
+local makeBonusTarget = function()
+    local a = math.random() * 2 * math.pi
+    local t = BonusTarget:new({
+        x      = BonusTarget.radius + math.random(global.width  - 2*BonusTarget.radius),
+        y      = BonusTarget.radius + math.random(global.height - 2*BonusTarget.radius),
+        speedX = 40 * math.cos(a),
+        speedY = 40 * math.sin(a)
+    })
+    return t
+end
+
 
 function Generator:constructor(o)
     self:apply(o)
@@ -44,8 +56,11 @@ end
 
 function Generator:addOne()
     local t
-    if math.random() < 0.1 then
+    local r = math.random()
+    if r < 0.05 and BigTarget.count < 3 then
         t = makeBigTarget()
+    elseif r < 0.1 and BonusTarget.count < 3 then
+        t = makeBonusTarget()
     else
         t = makeBasicTarget()
     end

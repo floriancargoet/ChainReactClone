@@ -1,5 +1,5 @@
 require 'state'
-require 'basictarget'
+require 'triggertarget'
 require 'generator'
 
 local level = State:new()
@@ -15,7 +15,7 @@ function level:init()
 
     self.generator:init()
     self.score = 0
-    self.maxdepth = 0
+    self.maxDepth = 0
 end
 
 function level:reset()
@@ -30,11 +30,9 @@ function level:keyreleased(key)
 end
 
 function level:mousepressed(x, y, button)
-    local source = BasicTarget:new({
+    local source = TriggerTarget:new({
         x = x,
-        y = y,
-        points = 0,
-        explodingColor = {0, 255, 0}
+        y = y
     })
     table.insert(self.targets, source)
     source:explode()
@@ -49,7 +47,7 @@ function level:update(dt)
         if t.dead then
             table.insert(toRemove, i)
             self.score = self.score + t:getPoints()
-            self.maxdepth = math.max(self.maxdepth, t.depth)
+            self.maxDepth = math.max(self.maxDepth, t.depth)
         end
         -- propagate explosion
         if t.exploding and not t.dead then
@@ -71,7 +69,7 @@ function level:draw()
         t:draw()
     end
     love.graphics.print('Score: '..tostring(self.score), 0, 40)
-    love.graphics.print('Max Depth: '..tostring(self.maxdepth), 0, 60)
+    love.graphics.print('Max Depth: '..tostring(self.maxDepth), 0, 60)
     love.graphics.print('Population: '..tostring(#self.targets), 0, 80)
 
 end
