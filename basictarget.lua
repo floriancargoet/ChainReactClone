@@ -112,7 +112,7 @@ function BasicTarget:draw()
     -- draw circle
     love.graphics.setColor(unpack(self.color))
     love.graphics.setLineWidth(1.5)
-    love.graphics.circle('line', self.x, self.y, self.radius, 30)
+    love.graphics.circle('line', self.x, self.y, self.radius, math.max(3*self.radius, 100))
     -- restore state
     love.graphics.setColor(r, g, b, a)
     love.graphics.setLineWidth(w)
