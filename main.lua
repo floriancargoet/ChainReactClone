@@ -10,7 +10,6 @@ math.randomseed( os.time() )
 local game     = Game:new()
 local showFPS  = true
 local showMore = true
-local maxDt    = 16 -- ~= 1000/60
 
 -- delegate love callbacks to the game instance
 function love.load()
@@ -37,12 +36,6 @@ function love.draw()
     if showMore then
         local x, y = love.mouse.getPosition()
         love.graphics.print('Mouse: '..x..', '..y, 0, 20)
-    end
-
-    --max 60 fps
-    local dt = love.timer.getDelta()/1000
-    if dt < maxDt then
-        love.timer.sleep(maxDt - dt)
     end
 end
 
