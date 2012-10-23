@@ -17,10 +17,32 @@ BasicTarget = Object:subclass({
 
 function BasicTarget:constructor(config)
     self:apply(config)
+    self.children = {}
 end
 
 function BasicTarget:die()
     self.dead = true
+end
+
+function BasicTarget:allDead()
+    if not self.dead then
+        return false
+    end
+
+    for i, child in ipairs(self.children) do
+        if not child:allDead() then
+            return false
+        end
+    end
+
+    return true
+end
+
+function BasicTarget:markAllToBeRemoved()
+    self.toRemove = true
+    for i, child in ipairs(self.children) do
+        child:markAllToBeRemoved()
+    end
 end
 
 function BasicTarget:getPoints()
@@ -50,13 +72,19 @@ function BasicTarget:touches(target)
     return dx * dx + dy * dy <= d * d
 end
 
-function BasicTarget:explode(depth)
+function BasicTarget:explode(depth, parent)
     if not self.exploding then
-        self.depth = depth or 1
+        self.depth     = depth or 1
         self.exploding = true
-        self.speedX = 0
-        self.speedY = 0
-        self.color = self.explodingColor
+        self.speedX    = 0
+        self.speedY    = 0
+        self.color     = self.explodingColor
+
+        -- parent-child relationship
+        if parent then
+            self.parent = parent
+            table.insert(parent.children, self)
+        end
     end
 end
 
@@ -64,7 +92,7 @@ function BasicTarget:propagate(all)
     local hasPropagated = false
     for _, n in self:getNeighborsIPairs(all) do
         if not n.exploding then
-            n:explode(self.depth + 1)
+            n:explode(self.depth + 1, self)
             hasPropagated = true
         end
     end
@@ -109,10 +137,19 @@ function BasicTarget:draw()
     -- save state
     local r, g, b, a = love.graphics.getColor()
     local w = love.graphics.getLineWidth()
-    -- draw circle
-    love.graphics.setColor(unpack(self.color))
-    love.graphics.setLineWidth(1.5)
-    love.graphics.circle('line', self.x, self.y, self.radius, math.max(3*self.radius, 100))
+
+    if not self.dead then
+        -- draw circle
+        love.graphics.setColor(unpack(self.color))
+        love.graphics.setLineWidth(1.5)
+        love.graphics.circle('line', self.x, self.y, self.radius, math.max(3*self.radius, 100))
+    end
+
+    -- link to parent
+    if self.parent then
+        love.graphics.line(self.x, self.y, self.parent.x, self.parent.y)
+    end
+
     -- restore state
     love.graphics.setColor(r, g, b, a)
     love.graphics.setLineWidth(w)

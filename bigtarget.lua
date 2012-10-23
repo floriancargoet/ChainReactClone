@@ -16,14 +16,16 @@ function BigTarget:constructor(...)
 end
 
 function BigTarget:die()
-    BigTarget.count = BigTarget.count - 1
-    self.dead = true
+    if not self.dead then
+        BigTarget.count = BigTarget.count - 1
+        self.dead = true
+    end
 end
 
 
-function BigTarget:explode(depth)
+function BigTarget:explode(depth, parent)
     if not self.exploding then
         self.maxRadius = math.min(50 + 10 * (depth or 1), 200)
-        BigTarget.super.explode(self, depth)
+        BigTarget.super.explode(self, depth, parent)
     end
 end

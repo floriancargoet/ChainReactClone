@@ -16,8 +16,10 @@ function BonusTarget:constructor(...)
 end
 
 function BonusTarget:die()
-    BonusTarget.count = BonusTarget.count - 1
-    self.dead = true
+    if not self.dead then
+        BonusTarget.count = BonusTarget.count - 1
+        self.dead = true
+    end
 end
 
 function BonusTarget:propagate(all)
@@ -29,7 +31,7 @@ function BonusTarget:propagate(all)
             n.propagate = BonusTarget.propagate
             n.explodingColor = BonusTarget.explodingColor
             
-            n:explode(self.depth + 1)
+            n:explode(self.depth + 1, self)
         end
     end
 end

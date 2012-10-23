@@ -5,7 +5,10 @@ require 'generator'
 local level = State:new()
 
 function level:init()
+    -- all targets
     self.targets = {}
+    -- exploding trees
+    self.roots = {}
 
     self.generator = Generator:new({
         maxPopulation = 200,
@@ -35,17 +38,30 @@ function level:mousepressed(x, y, button)
         y = y
     })
     table.insert(self.targets, source)
+    table.insert(self.roots,   source)
+
     source:explode()
 end
 
 function level:update(dt)
     self.generator:update(dt)
+
+    -- mark targets belongind to finished trees
+    for i, t in ipairs(self.roots) do
+        if t:allDead() then
+            t:markAllToBeRemoved()
+        end
+    end
+
     local toRemove = {}
+
     for i, t in ipairs(self.targets) do
         t:update(dt)
-        -- remove dead targets
-        if t.dead then
+        -- collect targets to remove
+        if t.toRemove then
             table.insert(toRemove, i)
+        end
+        if t.dead then
             self.score = self.score + t:getPoints()
             self.maxDepth = math.max(self.maxDepth, t.depth)
         end

@@ -3,46 +3,28 @@ require 'basictarget'
 require 'bigtarget'
 require 'bonustarget'
 
+
 -- Generator class
 Generator = Object:subclass({
+    -- config
     maxPopulation = 100,
     growth = 10, -- per second
+
+    -- internal
     toAdd = 0
 })
 
-local makeBasicTarget = function()
+local make = function(Class)
     local a = math.random() * 2 * math.pi
-    local t = BasicTarget:new({
-        x      = BasicTarget.radius + math.random(global.width  - 2*BasicTarget.radius),
-        y      = BasicTarget.radius + math.random(global.height - 2*BasicTarget.radius),
-        speedX = 40 * math.cos(a),
-        speedY = 40 * math.sin(a)
+    local speed = 30
+    local t = Class:new({
+        x      = Class.radius + math.random(global.width  - 2*Class.radius),
+        y      = Class.radius + math.random(global.height - 2*Class.radius),
+        speedX = speed * math.cos(a),
+        speedY = speed * math.sin(a)
     })
     return t
 end
-
-local makeBigTarget = function()
-    local a = math.random() * 2 * math.pi
-    local t = BigTarget:new({
-        x      = BigTarget.radius + math.random(global.width  - 2*BigTarget.radius),
-        y      = BigTarget.radius + math.random(global.height - 2*BigTarget.radius),
-        speedX = 40 * math.cos(a),
-        speedY = 40 * math.sin(a)
-    })
-    return t
-end
-
-local makeBonusTarget = function()
-    local a = math.random() * 2 * math.pi
-    local t = BonusTarget:new({
-        x      = BonusTarget.radius + math.random(global.width  - 2*BonusTarget.radius),
-        y      = BonusTarget.radius + math.random(global.height - 2*BonusTarget.radius),
-        speedX = 40 * math.cos(a),
-        speedY = 40 * math.sin(a)
-    })
-    return t
-end
-
 
 function Generator:constructor(o)
     self:apply(o)
@@ -50,7 +32,7 @@ end
 
 function Generator:init()
     for i = 1, self.maxPopulation/2 do
-        table.insert(self.population, makeBasicTarget())
+        table.insert(self.population, make(BasicTarget))
     end
 end
 
@@ -58,11 +40,11 @@ function Generator:addOne()
     local t
     local r = math.random()
     if r < 0.05 and BigTarget.count < 3 then
-        t = makeBigTarget()
+        t = make(BigTarget)
     elseif r < 0.1 and BonusTarget.count < 3 then
-        t = makeBonusTarget()
+        t = make(BonusTarget)
     else
-        t = makeBasicTarget()
+        t = make(BasicTarget)
     end
     table.insert(self.population, t)
 end
