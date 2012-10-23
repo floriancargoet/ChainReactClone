@@ -49,7 +49,11 @@ end
 
 -- quit shortcut
 function Game:quit()
-    love.event.push('q')
+    if love.event.quit then
+        love.event.quit() -- löve >= 0.8
+    else
+        love.event.push('q') -- löve < 0.8
+    end
 end
 
 -- love callbacks
