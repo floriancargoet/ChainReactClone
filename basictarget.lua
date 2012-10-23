@@ -6,7 +6,7 @@ BasicTarget = Object:subclass({
     x         = 0,
     y         = 0,
     radius    = 10,
-    maxRadius = 30,
+    maxRadius = 40,
     speedX    = 0,
     speedY    = 0,
     stopOnPropagate = false,
@@ -38,10 +38,10 @@ function BasicTarget:allDead()
     return true
 end
 
-function BasicTarget:markAllToBeRemoved()
-    self.toRemove = true
+function BasicTarget:cascade(fn)
+    fn(self)
     for i, child in ipairs(self.children) do
-        child:markAllToBeRemoved()
+        child:cascade(fn)
     end
 end
 

@@ -25,3 +25,7 @@ function TriggerTarget:draw()
     love.graphics.setColor(r, g, b, a)
     love.graphics.setLineWidth(w)
 end
+
+function TriggerTarget:explode()
+    TriggerTarget.super.explode(self, 0)
+end
