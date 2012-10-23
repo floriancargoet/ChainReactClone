@@ -10,7 +10,7 @@ BasicTarget = Object:subclass({
     speedX    = 0,
     speedY    = 0,
     stopOnPropagate = false,
-    explosionSpeed  = 30,
+    explosionSpeed  = 40,
     color           = {255, 255, 255},
     explodingColor  = {255, 0, 0}
 })
