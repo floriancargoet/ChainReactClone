@@ -2,6 +2,7 @@ local Object      = require 'oo'
 local BasicTarget = require 'basictarget'
 local BigTarget   = require 'bigtarget'
 local BonusTarget = require 'bonustarget'
+local TimeTarget  = require 'timetarget'
 
 
 -- Generator class
@@ -43,6 +44,8 @@ function Generator:addOne()
         t = make(BigTarget)
     elseif r < 0.1 and BonusTarget.count < 3 then
         t = make(BonusTarget)
+    elseif r < 0.15 and TimeTarget.count < 3 then
+        t = make(TimeTarget)
     else
         t = make(BasicTarget)
     end

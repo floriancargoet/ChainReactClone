@@ -48,7 +48,10 @@ end
 function level:update(dt)
     self.generator:update(dt)
     self:updateFlashMessages(dt)
+    self:updateTargets(dt)
+end
 
+function level:updateTargets(dt)
     -- mark targets belonging to finished trees as to be removed
     local toRemove = {}
     for i, t in ipairs(self.roots) do

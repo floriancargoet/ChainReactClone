@@ -1,4 +1,3 @@
-local Object = require('oo')
 local BasicTarget = require('basictarget')
 
 local BonusTarget = BasicTarget:subclass({
