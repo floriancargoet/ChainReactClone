@@ -81,6 +81,16 @@ function BasicTarget:explode(depth, parent)
         self.speedY    = 0
         self.color     = self.explodingColor
 
+        self.particles = {
+            Particle:new(self, 0),
+            Particle:new(self, 1*math.pi/4),
+            Particle:new(self, 2*math.pi/4),
+            Particle:new(self, 3*math.pi/4),
+            Particle:new(self, 4*math.pi/4),
+            Particle:new(self, 5*math.pi/4),
+            Particle:new(self, 6*math.pi/4),
+            Particle:new(self, 7*math.pi/4)
+        }
         -- parent-child relationship
         if parent then
             self.parent = parent
@@ -106,6 +116,7 @@ function BasicTarget:update(dt)
     self:updateExplosion(dt)
     self:updatePosition(dt)
     self:updateCollisions(dt)
+    self:updateParticles(dt)
 end
 
 function BasicTarget:updateExplosion(dt)
@@ -134,6 +145,14 @@ function BasicTarget:updateCollisions(dt)
     end
 end
 
+function BasicTarget:updateParticles(dt)
+    if self.particles then
+        for _, p in ipairs(self.particles) do
+            p:update(dt)
+        end
+    end
+end
+
 function BasicTarget:draw()
     -- save state
     local r, g, b, a = love.graphics.getColor()
@@ -144,10 +163,20 @@ function BasicTarget:draw()
         love.graphics.setColor(unpack(self.color))
         love.graphics.setLineWidth(1.5)
         love.graphics.circle('line', self.x, self.y, self.radius, math.max(3*self.radius, 100))
+
+        if self.exploding then
+            -- particles
+            for _, p in ipairs(self.particles) do
+                p:draw()
+            end
+        end
     end
 
     -- link to parent
     if self.parent then
+        local r1, g1, b1 = love.graphics.getColor()
+        love.graphics.setLineWidth(1.5)
+        love.graphics.setColor(r1, g1, b1, 100)
         love.graphics.line(self.x, self.y, self.parent.x, self.parent.y)
     end
 
