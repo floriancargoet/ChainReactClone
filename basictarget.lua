@@ -1,6 +1,7 @@
-require 'oo'
+local Object   = require 'oo'
+local Particle = require 'particle'
 
-BasicTarget = Object:subclass({
+local BasicTarget = Object:subclass({
     points    = 1,
     depth     = 1,
     x         = 0,
@@ -154,3 +155,5 @@ function BasicTarget:draw()
     love.graphics.setColor(r, g, b, a)
     love.graphics.setLineWidth(w)
 end
+
+return BasicTarget

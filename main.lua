@@ -1,6 +1,9 @@
-require 'game'
+local Game  = require 'game'
+local utils = require 'utils'
 
-global = {
+utils.noglobal('global', 'fail') -- use global.name = value to create a global
+
+global.global = {
     width  = love.graphics.getWidth(),
     height = love.graphics.getHeight()
 }

@@ -1,7 +1,7 @@
-require 'oo'
+local Object = require 'oo'
 
 -- Game class
-Game = Object:subclass()
+local Game = Object:subclass()
 
 function Game:constructor()
     self.loadedStates = {}
@@ -71,3 +71,5 @@ for i, method in ipairs(callbacks) do
         self.currentState[method](self.currentState, ...)
     end
 end
+
+return Game

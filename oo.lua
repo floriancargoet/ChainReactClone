@@ -8,7 +8,7 @@
 --     it only works on one level!
 --     use Class.super.method(self) instead
 
-Object = {}
+local Object = {}
 Object.class = Object
 
 function Object:subclass(new)
@@ -48,3 +48,5 @@ function Object:is_a(Class)
   end
   return false
 end
+
+return Object

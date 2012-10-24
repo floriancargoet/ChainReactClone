@@ -1,9 +1,9 @@
-require 'oo'
-require 'utils'
+local Object = require 'oo'
+local utils = require 'utils'
 
-State = Object:subclass()
+local State = Object:subclass()
 
-Observable:mixin(State)
+utils.Observable:mixin(State)
 
 function State:exit()
     self:trigger('exit')
@@ -30,3 +30,5 @@ for i, method in ipairs(callbacks) do
     State[method] = function()
     end
 end
+
+return State

@@ -1,6 +1,6 @@
-require 'state'
-require 'triggertarget'
-require 'generator'
+local State         = require 'state'
+local TriggerTarget = require 'triggertarget'
+local Generator     = require 'generator'
 
 local level = State:new()
 

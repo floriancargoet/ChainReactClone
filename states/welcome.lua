@@ -1,4 +1,4 @@
-require 'state'
+local State = require 'state'
 
 local welcome = State:new()
 

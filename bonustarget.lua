@@ -1,7 +1,7 @@
-require('oo')
-require('basictarget')
+local Object = require('oo')
+local BasicTarget = require('basictarget')
 
-BonusTarget = BasicTarget:subclass({
+local BonusTarget = BasicTarget:subclass({
     points = 5,
     radius = 5,
     color  = {255, 255, 0},
@@ -35,3 +35,5 @@ function BonusTarget:propagate(all)
         end
     end
 end
+
+return BonusTarget

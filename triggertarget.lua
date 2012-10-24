@@ -1,7 +1,7 @@
-require('oo')
-require('basictarget')
+local Object      = require('oo')
+local BasicTarget = require('basictarget')
 
-TriggerTarget = BasicTarget:subclass({
+local TriggerTarget = BasicTarget:subclass({
     points          = 0,
     maxRadius       = math.huge,
     stopOnPropagate = true,
@@ -29,3 +29,5 @@ end
 function TriggerTarget:explode()
     TriggerTarget.super.explode(self, 0)
 end
+
+return TriggerTarget

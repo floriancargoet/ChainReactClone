@@ -1,11 +1,11 @@
-require 'oo'
-require 'basictarget'
-require 'bigtarget'
-require 'bonustarget'
+local Object      = require 'oo'
+local BasicTarget = require 'basictarget'
+local BigTarget   = require 'bigtarget'
+local BonusTarget = require 'bonustarget'
 
 
 -- Generator class
-Generator = Object:subclass({
+local Generator = Object:subclass({
     -- config
     maxPopulation = 100,
     growth = 10, -- per second
@@ -61,3 +61,5 @@ function Generator:update(dt)
         self.toAdd = self.toAdd - 1
     end
 end
+
+return Generator

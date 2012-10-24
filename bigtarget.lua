@@ -1,7 +1,7 @@
-require('oo')
-require('basictarget')
+local Object = require('oo')
+local BasicTarget = require('basictarget')
 
-BigTarget = BasicTarget:subclass({
+local BigTarget = BasicTarget:subclass({
     radius    = 5,
     maxRadius = 80,
     color     = {255, 0, 0},
@@ -29,3 +29,5 @@ function BigTarget:explode(depth, parent)
         BigTarget.super.explode(self, depth, parent)
     end
 end
+
+return BigTarget
