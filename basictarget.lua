@@ -1,4 +1,5 @@
 local Object   = require 'oo'
+local utils    = require 'utils'
 local Particle = require 'particle'
 
 local BasicTarget = Object:subclass({
@@ -16,13 +17,18 @@ local BasicTarget = Object:subclass({
     explodingColor  = {255, 0, 0}
 })
 
+utils.Observable:mixin(BasicTarget)
+
 function BasicTarget:constructor(config)
     self:apply(config)
     self.children = {}
 end
 
 function BasicTarget:die()
-    self.dead = true
+    if not self.dead then
+        self.dead = true
+        self:trigger('death', self) -- class event
+    end
 end
 
 function BasicTarget:allDead()
@@ -96,6 +102,7 @@ function BasicTarget:explode(depth, parent)
             self.parent = parent
             table.insert(parent.children, self)
         end
+        self:trigger('explode', self) -- class event
     end
 end
 

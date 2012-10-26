@@ -12,7 +12,8 @@ local Generator = Object:subclass({
     growth = 10, -- per second
 
     -- internal
-    toAdd = 0
+    toAdd = 0,
+    count = 0
 })
 
 local make = function(Class)
@@ -29,6 +30,9 @@ end
 
 function Generator:constructor(o)
     self:apply(o)
+    BasicTarget:on('death', function()
+        self.count = self.count - 1
+    end, self)
 end
 
 function Generator:init()
@@ -40,20 +44,29 @@ end
 function Generator:addOne()
     local t
     local r = math.random()
-    if r < 0.05 and BigTarget.count < 3 then
-        t = make(BigTarget)
-    elseif r < 0.1 and BonusTarget.count < 3 then
-        t = make(BonusTarget)
-    elseif r < 0.15 and TimeTarget.count < 3 then
-        t = make(TimeTarget)
-    else
+    if r < 0.05 then
+        if BigTarget.count < 3 then
+            t = make(BigTarget)
+        end
+    elseif r < 0.10 then
+        if BonusTarget.count < 3 then
+            t = make(BonusTarget)
+        end
+    elseif r < 0.15 then
+        if TimeTarget.count < 3 then
+            t = make(TimeTarget)
+        end
+    end
+
+    if not t then
         t = make(BasicTarget)
     end
     table.insert(self.population, t)
+    self.count = self.count + 1
 end
 
 function Generator:update(dt)
-    if #self.population >= self.maxPopulation then
+    if self.count >= self.maxPopulation then
         self.toAdd = 0
         return
     end

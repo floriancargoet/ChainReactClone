@@ -17,6 +17,10 @@ end
 function State:reset()
 end
 
+-- called when on the top of the stack after a pop
+function State:restore()
+end
+
 local callbacks = {
     'keypressed',
     'keyreleased',

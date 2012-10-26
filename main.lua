@@ -1,5 +1,6 @@
 local Game  = require 'game'
 local utils = require 'utils'
+local loveutils = require 'loveutils'
 
 utils.noglobal('global', 'fail') -- use global.name = value to create a global
 
@@ -11,8 +12,8 @@ global.global = {
 math.randomseed( os.time() )
 
 local game     = Game:new()
-local showFPS  = true
-local showMore = true
+local showFPS  = false
+local showMore = false
 
 -- delegate love callbacks to the game instance
 function love.load()
@@ -32,13 +33,14 @@ function love.keyreleased(key)
 end
 
 function love.draw()
+    loveutils.print() -- reset
     game:draw()
     if showFPS then
-        love.graphics.print('FPS: '..love.timer.getFPS(), 0, 0)
+        loveutils.print('FPS: '..love.timer.getFPS())
     end
     if showMore then
         local x, y = love.mouse.getPosition()
-        love.graphics.print('Mouse: '..x..', '..y, 0, 20)
+        loveutils.print('Mouse: '..x..', '..y)
     end
 end
 

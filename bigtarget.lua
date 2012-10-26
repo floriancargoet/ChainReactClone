@@ -17,7 +17,7 @@ end
 function BigTarget:die()
     if not self.dead then
         BigTarget.count = BigTarget.count - 1
-        self.dead = true
+        BigTarget.super.die(self)
     end
 end
 

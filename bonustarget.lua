@@ -17,7 +17,7 @@ end
 function BonusTarget:die()
     if not self.dead then
         BonusTarget.count = BonusTarget.count - 1
-        self.dead = true
+        BonusTarget.super.die(self)
     end
 end
 

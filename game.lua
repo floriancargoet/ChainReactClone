@@ -17,11 +17,13 @@ function Game:pushState(stateName)
     local state = self:getState(stateName)
     table.insert(self.stateStack, state)
     self.currentState = state
+    return state
 end
 
-function Game:popState(stateName)
+function Game:popState()
     table.remove(self.stateStack)
     self.currentState = self.stateStack[#self.stateStack]
+    self.currentState:restore()
 end
 
 -- State loader
