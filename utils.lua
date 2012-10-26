@@ -44,8 +44,9 @@ function Observable:on(event, handler, context) -- type: any, function, table
     if not handler then
         error('handler cannot be nil', 2)
     end
-
-    self.events = self.events or {}
+    if not self:hasOwnProperty('events') then
+        self.events = {}
+    end
     self.events[event] = self.events[event] or {}
     table.insert(self.events[event], {handler = handler, context = context})
 end
@@ -55,12 +56,13 @@ function Observable:trigger(event, ...) -- type: any, ...
     if handlers then
         for _, hc in ipairs(handlers) do
             if hc.context then -- handler requires a 'self' value
-                hc.handler(hc.context, unpack(arg))
+                hc.handler(hc.context, ...)
             else
-                hc.handler(unpack(arg))
+                hc.handler(...)
             end
         end
     end
+    self.class:trigger(event, ...)
 end
 
 -- Prevent from using globals

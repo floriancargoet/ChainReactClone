@@ -49,4 +49,11 @@ function Object:is_a(Class)
   return false
 end
 
+function Object:hasOwnProperty(property)
+    local mt = getmetatable(self)
+    local has = (self[property] ~= nil)
+    setmetatable(self, mt)
+    return has
+end
+
 return Object
