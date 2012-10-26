@@ -28,7 +28,7 @@ end
 
 -- State loader
 function Game:loadState(stateName)
-    return dofile('states/'..stateName..'.lua')
+    return love.filesystem.load('states/'..stateName..'.lua')()
 end
 
 -- private - returns states, create and init if needed
