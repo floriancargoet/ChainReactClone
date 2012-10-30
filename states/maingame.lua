@@ -4,7 +4,7 @@ local TriggerTarget = require 'triggertarget'
 local Generator     = require 'generator'
 local loveutils     = require 'loveutils'
 
-local print = loveutils.print
+local lprint = loveutils.print
 
 local level = State:new()
 
@@ -179,11 +179,11 @@ function level:draw()
     for i, t in ipairs(self.targets) do
         t:draw()
     end
-    print('Score: '..tostring(self.score))
-    print('Max Depth: '..tostring(self.maxDepth))
-    print('Max Total: '..tostring(self.maxTotal))
-    print('Population: '..tostring(self.generator.count))
-    print('Time: '..formatTime(self.remainingTime))
+    lprint('Score: '..tostring(self.score))
+    lprint('Max Depth: '..tostring(self.maxDepth))
+    lprint('Max Total: '..tostring(self.maxTotal))
+    lprint('Population: '..tostring(self.generator.count))
+    lprint('Time: '..formatTime(self.remainingTime))
 
     for _, flash in ipairs(self.flashMessages) do
         love.graphics.print(flash.text, flash.x, flash.y)
