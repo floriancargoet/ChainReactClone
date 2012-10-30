@@ -51,6 +51,7 @@ end
 
 function Object:hasOwnProperty(property)
     local mt = getmetatable(self)
+    setmetatable(self, nil)
     local has = (self[property] ~= nil)
     setmetatable(self, mt)
     return has

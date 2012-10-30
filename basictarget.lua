@@ -27,7 +27,7 @@ end
 function BasicTarget:die()
     if not self.dead then
         self.dead = true
-        self:trigger('death', self) -- class event
+        self:trigger('death', self)
     end
 end
 
@@ -102,7 +102,7 @@ function BasicTarget:explode(depth, parent)
             self.parent = parent
             table.insert(parent.children, self)
         end
-        self:trigger('explode', self) -- class event
+        self:trigger('explode', self)
     end
 end
 

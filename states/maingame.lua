@@ -33,16 +33,17 @@ function level:init()
     self.remainingTime = 15
 
     -- register on  events
-    local this = self
-    TimeTarget:on('explode', function(target)
-        local time = target:getTime()
-        this.remainingTime = this.remainingTime + time
-        this:flash({
-            x = target.x,
-            y = target.y,
-            text = '+ '..formatTime(time)..' s!'
-        })
-    end)
+    TimeTarget:on('explode', self.onTimeExplode, self)
+end
+
+function level:onTimeExplode(target)
+    local time = target:getTime()
+    self.remainingTime = self.remainingTime + time
+    self:flash({
+        x = target.x,
+        y = target.y,
+        text = '+ '..formatTime(time)..' s!'
+    })
 end
 
 function level:reset()
@@ -52,6 +53,8 @@ end
 function level:restore()
     -- replay
     if self.remainingTime < 0 then
+        self.generator:destroy()
+        TimeTarget:removeListener('explode', self.onTimeExplode)
         self:init()
     end
 end
