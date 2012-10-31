@@ -5,7 +5,7 @@ local BigTarget = BasicTarget:subclass({
     maxRadius = 80,
     color     = {255, 0, 0},
     explosionSpeed = 60
-})
+}, 'BigTarget')
 
 BigTarget.count = 0
 

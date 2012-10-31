@@ -15,7 +15,7 @@ local BasicTarget = Object:subclass({
     explosionSpeed  = 40,
     color           = {255, 255, 255},
     explodingColor  = {255, 0, 0}
-})
+}, 'BasicTarget')
 
 utils.Observable:mixin(BasicTarget)
 

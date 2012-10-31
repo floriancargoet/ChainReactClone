@@ -10,21 +10,35 @@
 
 local Object = {}
 Object.class = Object
+Object.className = 'Object'
 
-function Object:subclass(new)
-  local parent = self
+function Object:subclass(new, name)
+  local super = self
   local new = new or {}
+  name = name or 'Sub'..super.className
+
   -- if something is not found in the class, search in the parent class
-  setmetatable(new, {__index = parent})
+  setmetatable(new, {
+    __index = super,
+    __tostring = function()
+      return '[class '..name..']'
+    end
+  })
   new.class = new
-  new.super = parent
+  new.super = super
+  new.className = name
   return new
 end
 
 function Object:new(...)
   local instance = {}
   -- if something is not found in the instance, search in the class
-  setmetatable(instance, {__index = self})
+  setmetatable(instance, {
+    __index = self,
+    __tostring  = function()
+        return '[object '..self.className..']'
+    end
+  })
   instance:constructor(...)
   return instance
 end

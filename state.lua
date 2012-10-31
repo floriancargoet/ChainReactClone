@@ -1,7 +1,7 @@
 local Object = require 'oo'
 local utils = require 'utils'
 
-local State = Object:subclass()
+local State = Object:subclass({}, 'State')
 
 utils.Observable:mixin(State)
 

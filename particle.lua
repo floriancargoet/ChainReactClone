@@ -3,7 +3,7 @@ local Object = require('oo')
 local Particle = Object:subclass({
     width = 5,
     opacity = 1
-})
+}, 'Particle')
 
 function Particle:constructor(parent, angle)
     self.parent = parent

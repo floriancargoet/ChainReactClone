@@ -5,6 +5,8 @@ local TriggerTarget = BasicTarget:subclass({
     maxRadius       = math.huge,
     stopOnPropagate = true,
     explodingColor  = {0, 255, 0}
+}, 'TriggerTarget')
+
 })
 
 function TriggerTarget:draw()

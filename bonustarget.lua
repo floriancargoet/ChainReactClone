@@ -5,7 +5,7 @@ local BonusTarget = BasicTarget:subclass({
     radius = 5,
     color  = {255, 255, 0},
     explodingColor = {255, 255, 0}
-})
+}, 'BonusTarget')
 
 BonusTarget.count = 0
 

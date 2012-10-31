@@ -4,7 +4,7 @@ local TimeTarget = BasicTarget:subclass({
     radius = 5,
     color  = {50, 50, 255},
     time   = 1
-})
+}, 'TimeTarget')
 
 TimeTarget.count = 0
 

@@ -17,7 +17,7 @@ local Generator = Object:subclass({
     timeCount  = 0,
     bonusCount = 0,
     bigCount   = 0
-})
+}, 'Generator')
 
 local make = function(Class)
     local a = math.random() * 2 * math.pi
