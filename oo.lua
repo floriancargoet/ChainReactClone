@@ -73,4 +73,35 @@ function Object:hasOwnProperty(property)
     return has
 end
 
+-- Tests
+---[[
+local Toto = Object:subclass({
+    a = 'lol'
+})
+Toto.b = 'lol'
+
+local toto = Toto:new()
+toto.c = 'lol'
+
+assert(not toto:hasOwnProperty('a'))
+assert(not toto:hasOwnProperty('b'))
+
+assert(toto:hasOwnProperty('c'))
+
+
+assert(toto.class == Toto)
+assert(Toto.class == Toto)
+
+local Titi = Toto:subclass()
+local titi = Titi:new()
+
+
+assert(titi.class == Titi)
+assert(Titi.class == Titi)
+
+assert(Toto.super == Object)
+assert(Titi.super == Toto)
+assert(Titi.super.super == Object)
+--]]
+
 return Object
