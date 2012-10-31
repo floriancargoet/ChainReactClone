@@ -1,6 +1,7 @@
 local State         = require 'state'
 local TimeTarget    = require 'timetarget'
 local TriggerTarget = require 'triggertarget'
+local BasicTarget   = require 'basictarget'
 local Generator     = require 'generator'
 local loveutils     = require 'loveutils'
 
@@ -31,9 +32,12 @@ function level:init()
     self.maxDepth = 0
     self.maxTotal = 0
     self.remainingTime = 15
+    self.triggerCount = 0
 
     -- register on  events
-    TimeTarget:on('explode', self.onTimeExplode, self)
+    TimeTarget   :on('explode', self.onTimeExplode,  self)
+    BasicTarget  :on('explode', self.onBasicExplode, self)
+    TriggerTarget:on('death',   self.onTriggerDie,   self)
 end
 
 function level:onTimeExplode(target)
@@ -46,6 +50,22 @@ function level:onTimeExplode(target)
     })
 end
 
+function level:onBasicExplode(target)
+    local score = target:getPoints()
+    self.score = self.score + score
+    if score > 0 then
+        self:flash({
+            x = target.x,
+            y = target.y,
+            text = '+ '..tostring(score)
+        })
+    end
+end
+
+function level:onTriggerDie(target)
+    self.triggerCount = self.triggerCount - 1
+end
+
 function level:reset()
     self:init()
 end
@@ -54,7 +74,9 @@ function level:restore()
     -- replay
     if self.remainingTime < 0 then
         self.generator:destroy()
-        TimeTarget:removeListener('explode', self.onTimeExplode)
+        TimeTarget :removeListener('explode', self.onTimeExplode)
+        BasicTarget:removeListener('explode', self.onBasicExplode)
+        TriggerTarget:removeListener('death', self.onTriggerDie)
         self:init()
     end
 end
@@ -71,14 +93,17 @@ function level:keyreleased(key)
 end
 
 function level:mousepressed(x, y, button)
-    local source = TriggerTarget:new({
-        x = x,
-        y = y
-    })
-    table.insert(self.targets, source)
-    table.insert(self.roots,   source)
+    if self.triggerCount < 3 then
+        self.triggerCount = self.triggerCount + 1
+        local source = TriggerTarget:new({
+            x = x,
+            y = y
+        })
+        table.insert(self.targets, source)
+        table.insert(self.roots,   source)
 
-    source:explode()
+        source:explode()
+    end
 end
 
 function level:update(dt)
@@ -106,21 +131,12 @@ function level:updateTargets(dt)
                 target.toRemove = true
                 depth = math.max(depth, target.depth)
                 total = total + 1
-                score = score + target:getPoints()
             end)
 
             table.insert(toRemove, i)
 
-            self.score = self.score + score
             self.maxDepth = math.max(depth, self.maxDepth)
             self.maxTotal = math.max(total, self.maxTotal)
-            --[[
-            self:flash({
-                x = t.x,
-                y = t.y,
-                text = 'S: '..tostring(score)..' T: '..tostring(total)..' D: '..tostring(depth)
-            })
-            --]]
         end
     end
 
@@ -179,15 +195,18 @@ function level:draw()
     for i, t in ipairs(self.targets) do
         t:draw()
     end
-    lprint('Score: '..tostring(self.score))
-    lprint('Max Depth: '..tostring(self.maxDepth))
-    lprint('Max Total: '..tostring(self.maxTotal))
+    lprint('Score: '     ..tostring(self.score))
+    lprint('Max Depth: ' ..tostring(self.maxDepth))
+    lprint('Max Total: ' ..tostring(self.maxTotal))
     lprint('Population: '..tostring(self.generator.count))
-    lprint('Time: '..formatTime(self.remainingTime))
+    lprint('Time: '      ..formatTime(self.remainingTime))
 
+    local r, g, b, a = love.graphics.getColor()
+    love.graphics.setColor(0, 255, 0)
     for _, flash in ipairs(self.flashMessages) do
         love.graphics.print(flash.text, flash.x, flash.y)
     end
+    love.graphics.setColor(r, g, b, a)
 end
 
 return level
