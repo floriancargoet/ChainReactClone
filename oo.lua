@@ -47,8 +47,10 @@ function Object:constructor()
 end
 
 function Object:apply(properties)
-  for property, value in pairs(properties) do
-    self[property] = value
+  if properties then
+    for property, value in pairs(properties) do
+      self[property] = value
+    end
   end
 end
 
