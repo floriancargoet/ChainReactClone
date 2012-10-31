@@ -7,6 +7,8 @@ local TriggerTarget = BasicTarget:subclass({
     explodingColor  = {0, 255, 0}
 }, 'TriggerTarget')
 
+TriggerTarget:stopEvents({
+    explode = true
 })
 
 function TriggerTarget:draw()

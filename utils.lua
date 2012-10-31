@@ -45,18 +45,18 @@ function Observable:on(event, handler, context) -- type: any, function, table
         error('handler cannot be nil', 2)
     end
 
-    if not self:hasOwnProperty('events') then
+    if not self:hasOwnProperty('_events') then
         if self ~= self.class then
         end
-        self.events = {}
+        self._events = {}
     end
-    self.events[event] = self.events[event] or {}
-    table.insert(self.events[event], {handler = handler, context = context})
+    self._events[event] = self._events[event] or {}
+    table.insert(self._events[event], {handler = handler, context = context})
 end
 
 function Observable:removeListener(event, handler)
-    if self:hasOwnProperty('events') then
-        local handlers = self.events[event]
+    if self:hasOwnProperty('_events') then
+        local handlers = self._events[event]
         if handlers then
             local idx
             for i, hc in ipairs(handlers) do
@@ -72,22 +72,15 @@ function Observable:removeListener(event, handler)
     end
 end
 
-function Observable:removeAllListeners(event)
-    if not self:hasOwnProperty('events') then
+function Observable:trigger(event, ...) -- type: any, ...
+    if self:hasOwnProperty('_stopEvents') and self._stopEvents[event] then
         return
     end
+    --print_err('Triggering '..event..' on '..tostring(self))
 
-    if event then
-        events[event] = nil
-    else
-        self.events = nil
-    end
-end
-
-function Observable:trigger(event, ...) -- type: any, ...
     local handlers
-    if self:hasOwnProperty('events') then
-        handlers = self.events[event]
+    if self:hasOwnProperty('_events') then
+        handlers = self._events[event]
     end
     if handlers then
         for _, hc in ipairs(handlers) do
@@ -98,9 +91,21 @@ function Observable:trigger(event, ...) -- type: any, ...
             end
         end
     end
+    -- if self is an instance, trigger on class
     if self ~= self.class then
         self.class:trigger(event, ...)
+    elseif self.super and self.super.trigger then-- else trigger on parent class
+        self.super:trigger(event, ...)
     end
+    --]]
+end
+
+function Observable:stopEvents(events)
+    self._stopEvents = events
+end
+
+function Observable:resumeEvents()
+    self._stopEvents = {}
 end
 
 -- Prevent from using globals
@@ -135,10 +140,16 @@ function copy(source, target)
 end
 
 local print_orig = print
-function print_err(str)
+function print_err(...)
+    local stringed_args = {}
+    for _, v in ipairs(arg) do
+        table.insert(stringed_args, tostring(v))
+    end
+    local str = table.concat(stringed_args, '\t')
+
     local info = debug.getinfo(2, 'Sl')
     -- We substring because love 0.8.0 adds an @ before the filename
-    print_orig(string.format('%s:%d: >>> %s', info.source:sub(2), info.currentline, tostring(str)))
+    print_orig(string.format('%s:%d: >>>\t%s', info.source:sub(2), info.currentline, str))
 end
 
 return {
