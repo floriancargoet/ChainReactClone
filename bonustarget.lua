@@ -1,7 +1,7 @@
 local BasicTarget = require('basictarget')
 
 local BonusTarget = BasicTarget:subclass({
-    points = 5,
+    points = 3,
     radius = 5,
     color  = {255, 255, 0},
     explodingColor = {255, 255, 0}
